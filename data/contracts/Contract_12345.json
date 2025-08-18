@@ -1,0 +1,44 @@
+{
+  "contract_number": "2025-INS-12345",
+  "customer_name": "John Doe",
+  "provider": "HealthyCare Insurance Inc.",
+  "effective_date": "2025-01-01",
+  "expiry_date": "2025-12-31",
+  "plan_type": "Comprehensive Health Plan",
+  "diseases_covered": [
+    "Diabetes Mellitus",
+    "Hypertension",
+    "Coronary Artery Disease",
+    "Chronic Kidney Disease",
+    "Asthma",
+    "Cancer (specified subtypes)",
+    "Arthritis",
+    "Mental Health Disorders (outpatient only)"
+  ],
+  "coverage_details": [
+    "Inpatient and Outpatient care",
+    "Prescription Drugs",
+    "Emergency Room Visits",
+    "Pre-existing Disease Coverage after 180 days",
+    "Preventive Health Checkups (once/year)",
+    "Maternity & Newborn Care"
+  ],
+  "deductible": "$500 per year",
+  "co_pay": {
+    "outpatient": "10%",
+    "inpatient": "5%"
+  },
+  "maximum_coverage_annual": "$250,000",
+  "network_providers": "All accredited hospitals in the state",
+  "exclusions": [
+    "Cosmetic procedures",
+    "Dental (except emergency)",
+    "Vision",
+    "Experimental treatments"
+  ],
+  "claim_submission_deadline": "60 days from discharge/service",
+  "customer_service_contact": {
+    "phone": "1-800-555-9876",
+    "email": "contact@healthycare.com"
+  }
+}

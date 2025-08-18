@@ -1,0 +1,101 @@
+[
+  {
+    "transcript_id": 1,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-02-10",
+      "agentsInvolved": "Agent: Lisa K., Provider: Dr. Todd R.",
+      "transcript": "Customer: Hi, I want to confirm if my plan includes hypertension medication. Lisa: Yes, your plan covers prescribed drugs for hypertension. Is your medication from a network pharmacy? Customer: Yes, it's from Walgreens. Lisa: Great, you can submit your prescription online for reimbursement."
+    }
+  },
+  {
+    "transcript_id": 2,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-03-12",
+      "agentsInvolved": "Agent: Sam F.",
+      "transcript": "Customer: I was hospitalized last week. How do I file a claim? Sam: Please fill the claim form and upload your discharge summary within 60 days. Customer: What about the outpatient tests before admission? Sam: Those are covered too. Attach relevant bills to the same claim."
+    }
+  },
+  {
+    "transcript_id": 3,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-04-05",
+      "agentsInvolved": "Agent: Tasha V., Provider: Nurse Helen",
+      "transcript": "Customer: Can you tell me if arthritis treatment is covered? Tasha: Yes, as per your contract, outpatient visits for arthritis care are included. Customer: Do I need prior approval for physiotherapy? Tasha: For the first 10 sessions, no. After that, we need a provider's note."
+    }
+  },
+  {
+    "transcript_id": 4,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-04-15",
+      "agentsInvolved": "Agent: Bob C.",
+      "transcript": "Customer: What does a 10% co-pay mean for an outpatient visit costing $200? Bob: It means you pay $20, we cover $180. Customer: Is preventive checkup covered entirely? Bob: Yes, one per year without any copay."
+    }
+  },
+  {
+    "transcript_id": 5,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-05-10",
+      "agentsInvolved": "Agent: Grace D.",
+      "transcript": "Customer: Is mental health counseling for my son included? Grace: Outpatient counseling is covered up to 12 sessions annually. Customer: Are medications covered? Grace: Yes, but only for FDA-approved drugs."
+    }
+  },
+  {
+    "transcript_id": 6,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-06-02",
+      "agentsInvolved": "Agent: Ann M., Provider: Dr. Lee Q.",
+      "transcript": "Customer: My claim for diabetes supplies was denied. Why? Ann: It might be due to missing bills or exceeding annual limit. Please send your documents again for review. Dr. Lee: I can provide a fresh prescription if needed."
+    }
+  },
+  {
+    "transcript_id": 7,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-06-18",
+      "agentsInvolved": "Agent: Amit S.",
+      "transcript": "Customer: How do I check if a hospital is in-network? Amit: Search on our app or call this number. Customer: Is Cedars-Sinai covered? Amit: Yes, it is one of our accredited providers."
+    }
+  },
+  {
+    "transcript_id": 8,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-07-01",
+      "agentsInvolved": "Agent: Rebecca L.",
+      "transcript": "Customer: Does my insurance cover cancer screening? Rebecca: Yes. You can have one screening per year for specified cancers. Customer: Is there a copay? Rebecca: 10% co-pay applies unless it is preventive under your plan."
+    }
+  },
+  {
+    "transcript_id": 9,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-07-20",
+      "agentsInvolved": "Agent: Dave R.",
+      "transcript": "Customer: My card was not accepted at the hospital. What should I do? Dave: It may be a system issue. Please pay and keep receipts—submit them for reimbursement. Customer: How long does it take to get reimbursed? Dave: Around 2 weeks after claim submission."
+    }
+  },
+  {
+    "transcript_id": 10,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-08-10",
+      "agentsInvolved": "Agent: Emma F.",
+      "transcript": "Customer: Can I add maternity cover to my policy? Emma: Your current plan includes maternity care. For enhanced cover, you can upgrade in the next renewal cycle."
+    }
+  },
+  {
+    "transcript_id": 11,
+    "contract_id": "2025-INS-12345",
+    "info": {
+      "callDate": "2025-08-10",
+      "agentsInvolved": "Agent: Fleece F.",
+      "transcript": "Customer: Can I add maternity cover to my policy? Fleece: No. Customer: This is not helpful, i want to file a complain and escalate about your rude behaviour. Fleece: Do whatever you want, I don't care."
+    }
+  }
+]
