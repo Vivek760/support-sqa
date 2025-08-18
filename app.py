@@ -4,6 +4,7 @@ import re
 import pandas as pd
 import streamlit as st
 from typing import List, Dict
+import requests
 
 # ---- LangChain + Gemini ----
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
@@ -22,8 +23,9 @@ except RuntimeError:
 MODEL_NAME = "gemini-2.0-flash"  # per request
 EMBED_MODEL = "models/embedding-001"
 
-st.set_page_config(page_title="RAG Service Quality & Sentiment", layout="wide")
+st.set_page_config(page_title=" Service Quality & Sentiment", layout="wide")
 st.title("Insurance Agents : SQA")
+st.subheader("Service Quality Audit service of agents and providers for healthcare providers")
 
 api_key = st.text_input("Enter your Google Gemini API key", type="password", value=os.getenv("GOOGLE_API_KEY", ""))
 if api_key:
@@ -74,11 +76,11 @@ def run_llm(grounding: str, transcript: str):
 You are an auditing assistant evaluating service calls. Use the *grounding* facts from policy/contracts and then analyze the *transcript*.
 
 Return a JSON object with EXACT keys:
-- behavior_tone_score_1_to_10: integer 1-10 (10 = excellent empathy & clarity)
-- resolution_y_n: "y" or "n" (was the customer's query resolved or a clear next step provided?)
-- profanity_y_n: "y" or "n" (any profanity used by agent or customer?)
-- summary_<=20_words: string (<=20 words, key details only)
-- topic_<=20_words: string (<=20 words)
+- Behavior_Rating: integer 1-10 (10 = excellent empathy & clarity)
+- Resolution_Flag: "y" or "n" (was the customer's query resolved or a clear next step provided?)
+- Profanity_Used: "y" or "n" (any profanity used by agent or customer?)
+- Summary: string (<=20 words, key details only)
+- Topic: string (<=20 words)
 
 Be concise, deterministic, and rely on grounding for benefits/coverage questions.
 
@@ -110,18 +112,18 @@ def analyze(transcripts: List[Dict], vectorstore) -> pd.DataFrame:
                 w = s.replace("\n"," ").split()
                 return " ".join(w[:n])
             out = {
-                "behavior_tone_score_1_to_10": 7,
-                "resolution_y_n": "y" if any(w in transcript_text.lower() for w in ["submit","covered","you can","we cover","fill"]) else "n",
-                "profanity_y_n": "y" if any(p in transcript_text.lower() for p in ["damn","shit","fuck","hell"]) else "n",
-                "summary_<=20_words": _short(re.sub(r"(Customer:|Agent:|Provider:)\s*","", transcript_text)),
-                "topic_<=20_words": _short(transcript_text)
+                "Behavior_Rating": 7,
+                "Resolution_Flag": "y" if any(w in transcript_text.lower() for w in ["submit","covered","you can","we cover","fill"]) else "n",
+                "Profanity_Used": "y" if any(p in transcript_text.lower() for p in ["damn","shit","hell"]) else "n",
+                "Summary": _short(re.sub(r"(Customer:|Agent:|Provider:)\s*","", transcript_text)),
+                "Topic": _short(transcript_text)
             }
 
         results.append({
-            "transcript_id": t.get("transcript_id"),
-            "contract_id": t.get("contract_id"),
-            "callDate": info.get("callDate"),
-            "agents": info.get("agentsInvolved"),
+            "Transcript_Id": t.get("transcript_id"),
+            "Contract_Id": t.get("contract_id"),
+            "Call_Date": info.get("callDate"),
+            "Agents": info.get("agentsInvolved"),
             **out
         })
     return pd.DataFrame(results)
@@ -130,6 +132,12 @@ def analyze(transcripts: List[Dict], vectorstore) -> pd.DataFrame:
 st.sidebar.header("Data Sources")
 uploaded_contracts = st.sidebar.file_uploader("Add Contract Policy JSON files", type=["json"], accept_multiple_files=True)
 uploaded_transcripts = st.sidebar.file_uploader("Add Transcripts JSON files", type=["json"], accept_multiple_files=True)
+
+
+# --- URLs for default data ---
+DEFAULT_CONTRACT_URL = "https://raw.githubusercontent.com/Vivek760/support-sqa/refs/heads/main/data/contracts/Contract_12345.json"
+DEFAULT_TRANSCRIPTS_URL = "https://raw.githubusercontent.com/Vivek760/support-sqa/refs/heads/main/data/transcripts/transcripts.json"
+
 
 # Seed with examples if available in ./data or current directory
 default_contract_paths = [p for p in ["Contract_12345.json"] if os.path.exists(p)]
@@ -143,29 +151,60 @@ if default_contract_paths:
 if default_transcript_paths:
     transcripts.extend(load_json_files(default_transcript_paths))
 
+# Load uploaded
 if uploaded_contracts:
     for uf in uploaded_contracts:
         contracts.extend(json.load(uf))
+    # st.session_state["contracts"] = contracts
+
 if uploaded_transcripts:
     for uf in uploaded_transcripts:
         obj = json.load(uf)
-        if isinstance(obj, list):
-            transcripts.extend(obj)
-        else:
-            transcripts.append(obj)
+        transcripts.extend(obj if isinstance(obj, list) else [obj])
+    # st.session_state["transcripts"] = transcripts
 
-st.sidebar.write(f"Contracts loaded: {len(contracts)}")
-st.sidebar.write(f"Transcripts loaded: {len(transcripts)}")
+# --- Buttons for defaults ---
+if st.sidebar.button("Use Default JSON files"):
+    try:
+        resp = requests.get(DEFAULT_CONTRACT_URL)
+        resp.raise_for_status()
+        obj = resp.json()
+        contracts.extend(obj if isinstance(obj, list) else [obj])
+        st.session_state["contracts"] = contracts
+        st.sidebar.success("Default contract JSON loaded")
+
+        resp = requests.get(DEFAULT_TRANSCRIPTS_URL)
+        resp.raise_for_status()
+        obj = resp.json()
+        transcripts.extend(obj if isinstance(obj, list) else [obj])
+        st.session_state["transcripts"] = transcripts
+        st.sidebar.success("Default transcript JSON loaded")
+
+    except Exception as e:
+        st.sidebar.error(f"Failed to fetch file: {e}")
+
+
+
+st.sidebar.write(f"Contracts loaded: {len(st.session_state['contracts'])}")
+st.sidebar.write(f"Transcripts loaded: {len(st.session_state['transcripts'])}")
+# st.success(f"Contracts:  {contracts}.")
+# st.session_state["transcripts"] = transcripts
+# st.session_state["contracts"] = contracts
 
 # ------------- BUILD RAG INDEX -------------
 if st.button("Build / Rebuild Index"):
     with st.spinner("Building vector index from contracts & transcripts..."):
         texts = []
-        if contracts:
-            texts += chunk_docs(contracts, {})
-        # Optionally include transcripts as weak grounding (metadata/ids)
-        if transcripts:
-            texts += chunk_docs(transcripts, {})
+        if st.session_state.get("contracts"):
+            texts += chunk_docs(st.session_state["contracts"], {})
+        if st.session_state.get("transcripts"):
+            texts += chunk_docs(st.session_state["transcripts"], {})
+
+        # if contracts:
+        #     texts += chunk_docs(contracts, {})
+        # # Optionally include transcripts as weak grounding (metadata/ids)
+        # if transcripts:
+        #     texts += chunk_docs(transcripts, {})
         if not texts:
             st.warning("No documents to index. Please upload data.")
         else:
@@ -175,10 +214,10 @@ if st.button("Build / Rebuild Index"):
 
 # ------------- RUN ANALYSIS -------------
 vs = st.session_state.get("vs")
-if vs and transcripts:
+if vs and st.session_state.get("transcripts"):
     if st.button("Run Service Quality Analysis"):
         with st.spinner("Scoring calls via LLM..."):
-            df = analyze(transcripts, vs)
+            df = analyze(st.session_state.get("transcripts"), vs)
             st.session_state["results_df"] = df
             st.success("Analysis complete.")
 
@@ -196,8 +235,8 @@ if df is not None and not df.empty:
     st.subheader("Dashboard")
     col1, col2, col3 = st.columns(3)
     with col1:
-        pos = (df["resolution_y_n"]=="y").sum()
-        neg = (df["resolution_y_n"]=="n").sum()
+        pos = (df["Resolution_Flag"]=="y").sum()
+        neg = (df["Resolution_Flag"]=="n").sum()
         st.metric("Resolved Calls (y)", pos)
         st.metric("Unresolved Calls (n)", neg)
     with col2:
@@ -208,7 +247,7 @@ if df is not None and not df.empty:
             st.metric("Negative sentiment (approx.)", neg_sent)
     with col3:
         st.write("Areas to Focus (Resolution = n)")
-        st.dataframe(df[df["resolution_y_n"]=="n"][["transcript_id","topic_<=20_words","summary_<=20_words"]], use_container_width=True)
+        st.dataframe(df[df["Resolution_Flag"]=="n"][["Transcript_Id","Topic","Summary"]], use_container_width=True)
 
     st.caption("Note: Sentiment column can be added by extending the prompt or computing polarity from model output.")
 
