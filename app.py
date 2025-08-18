@@ -184,9 +184,11 @@ if st.sidebar.button("Use Default JSON files"):
         st.sidebar.error(f"Failed to fetch file: {e}")
 
 
+contracts_len = st.session_state["contracts"]
+transcripts_len =st.session_state["transcripts"]
+st.sidebar.write(f"Contracts loaded: {len(contracts_len)}")
+st.sidebar.write(f"Transcripts loaded: {len(transcripts_len)}")
 
-st.sidebar.write(f"Contracts loaded: {len(st.session_state['contracts'])}")
-st.sidebar.write(f"Transcripts loaded: {len(st.session_state['transcripts'])}")
 # st.success(f"Contracts:  {contracts}.")
 # st.session_state["transcripts"] = transcripts
 # st.session_state["contracts"] = contracts
