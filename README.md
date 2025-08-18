@@ -5,11 +5,11 @@ This app uses **LangChain**, **Gemini 2.0 Flash**, and **Streamlit** to analyze 
 ## Features
 - RAG index over contracts (+ transcripts) with FAISS.
 - LLM-based scoring:
-  - behavior_tone_score_1_to_10
-  - resolution_y_n
-  - profanity_y_n
-  - summary_<=20_words
-  - topic_<=20_words
+  - Behavior_Rating
+  - Resolution_Flag
+  - Profanity_Used
+  - Summary
+  - Topic
 - Dashboard: sentiment/resolution counts and "Areas to Focus" (Resolution = n).
 - Upload more JSON files and re-run.
 - Export CSV.
