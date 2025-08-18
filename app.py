@@ -25,11 +25,12 @@ EMBED_MODEL = "models/embedding-001"
 
 st.set_page_config(page_title=" Service Quality & Sentiment", layout="wide")
 st.title("Insurance Agents : SQA")
-st.subheader("Service Quality Audit service of agents and providers for healthcare providers")
+st.subheader("Service Quality Audit service of agents and providers for healthcare providers, powered Gemini")
 
-api_key = st.text_input("Enter your Google Gemini API key", type="password", value=os.getenv("GOOGLE_API_KEY", ""))
-if api_key:
-    os.environ["GOOGLE_API_KEY"] = api_key
+# api_key = st.text_input("Enter your Google Gemini API key", type="password", value=os.getenv("GOOGLE_API_KEY", ""))
+# if api_key:
+
+os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY", "")
 
 # ------------- HELPERS -------------
 def load_json_files(files: List[str]) -> List[Dict]:
@@ -184,10 +185,8 @@ if st.sidebar.button("Use Default JSON files"):
         st.sidebar.error(f"Failed to fetch file: {e}")
 
 
-contracts_len = st.session_state["contracts"]
-transcripts_len =st.session_state["transcripts"]
-st.sidebar.write(f"Contracts loaded: {len(contracts_len)}")
-st.sidebar.write(f"Transcripts loaded: {len(transcripts_len)}")
+st.sidebar.write(f"Contracts loaded: {len(contracts)}")
+st.sidebar.write(f"Transcripts loaded: {len(transcripts)}")
 
 # st.success(f"Contracts:  {contracts}.")
 # st.session_state["transcripts"] = transcripts
@@ -208,7 +207,7 @@ if st.button("Build / Rebuild Index"):
         # if transcripts:
         #     texts += chunk_docs(transcripts, {})
         if not texts:
-            st.warning("No documents to index. Please upload data.")
+            st.warning("No documents to index. Please upload data from the sidebar.")
         else:
             vs = build_vectorstore(texts)
             st.session_state["vs"] = vs
