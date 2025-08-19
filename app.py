@@ -5,8 +5,6 @@ import pandas as pd
 import streamlit as st
 from typing import List, Dict
 import requests
-
-# ---- LangChain + Gemini ----
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -19,8 +17,7 @@ try:
 except RuntimeError:
     asyncio.set_event_loop(asyncio.new_event_loop())
 
-# ---------- CONFIG ----------
-MODEL_NAME = "gemini-2.0-flash"  # per request
+MODEL_NAME = "gemini-2.0-flash-lite"  # per request
 EMBED_MODEL = "models/embedding-001"
 
 st.set_page_config(page_title=" Service Quality & Sentiment", layout="wide")
@@ -32,7 +29,6 @@ st.subheader("Service Quality Audit service of agents and providers for healthca
 
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY", "")
 
-# ------------- HELPERS -------------
 def load_json_files(files: List[str]) -> List[Dict]:
     data = []
     for fp in files:
@@ -152,19 +148,17 @@ if default_contract_paths:
 if default_transcript_paths:
     transcripts.extend(load_json_files(default_transcript_paths))
 
-# Load uploaded
 if uploaded_contracts:
     for uf in uploaded_contracts:
         contracts.extend(json.load(uf))
-    # st.session_state["contracts"] = contracts
+    st.session_state["contracts"] = contracts
 
 if uploaded_transcripts:
     for uf in uploaded_transcripts:
         obj = json.load(uf)
         transcripts.extend(obj if isinstance(obj, list) else [obj])
-    # st.session_state["transcripts"] = transcripts
+    st.session_state["transcripts"] = transcripts
 
-# --- Buttons for defaults ---
 if st.sidebar.button("Use Default JSON files"):
     try:
         resp = requests.get(DEFAULT_CONTRACT_URL)
@@ -192,7 +186,6 @@ st.sidebar.write(f"Transcripts loaded: {len(transcripts)}")
 # st.session_state["transcripts"] = transcripts
 # st.session_state["contracts"] = contracts
 
-# ------------- BUILD RAG INDEX -------------
 if st.button("Build / Rebuild Index"):
     with st.spinner("Building vector index from contracts & transcripts..."):
         texts = []
@@ -213,7 +206,6 @@ if st.button("Build / Rebuild Index"):
             st.session_state["vs"] = vs
             st.success(f"Indexed {len(texts)} chunks.")
 
-# ------------- RUN ANALYSIS -------------
 vs = st.session_state.get("vs")
 if vs and st.session_state.get("transcripts"):
     if st.button("Run Service Quality Analysis"):
@@ -222,7 +214,6 @@ if vs and st.session_state.get("transcripts"):
             st.session_state["results_df"] = df
             st.success("Analysis complete.")
 
-# ------------- RESULTS & DASHBOARD -------------
 df = st.session_state.get("results_df")
 if df is not None and not df.empty:
     st.subheader("Results Table")
