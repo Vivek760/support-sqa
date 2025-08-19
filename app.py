@@ -22,7 +22,7 @@ EMBED_MODEL = "models/embedding-001"
 
 st.set_page_config(page_title=" Service Quality & Sentiment", layout="wide")
 st.title("Insurance Agents : SQA")
-st.subheader("Service Quality Audit service of agents and providers for healthcare providers, powered Gemini")
+st.subheader("Service Quality Audit service of agents and providers for healthcare providers, powered by Gemini..")
 
 # api_key = st.text_input("Enter your Google Gemini API key", type="password", value=os.getenv("GOOGLE_API_KEY", ""))
 # if api_key:
